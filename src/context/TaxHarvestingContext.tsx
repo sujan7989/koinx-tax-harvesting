@@ -38,7 +38,13 @@ export function TaxHarvestingProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     fetchHoldings()
-      .then((data) => setHoldings(data))
+      .then((data) => {
+        // Sort by absolute STCG gain descending — biggest impact first
+        const sorted = [...data].sort(
+          (a, b) => Math.abs(b.stcg.gain) - Math.abs(a.stcg.gain)
+        );
+        setHoldings(sorted);
+      })
       .catch(() => setHoldingsError('Failed to load holdings. Please try again.'))
       .finally(() => setHoldingsLoading(false));
 
