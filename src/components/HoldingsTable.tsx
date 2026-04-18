@@ -34,7 +34,6 @@ function IndeterminateCheckbox({
 function AssetCell({ holding, isSelected }: { holding: Holding; isSelected: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      {/* Icon wrapper — blue square when selected */}
       <div className={`relative flex-shrink-0 w-9 h-9 rounded-lg overflow-hidden
         ${isSelected ? 'ring-2 ring-[#1052FD]' : ''}`}>
         <img
@@ -50,8 +49,9 @@ function AssetCell({ holding, isSelected }: { holding: Holding; isSelected: bool
         />
       </div>
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-white leading-tight truncate max-w-[130px]">
-          {holding.coinName.length > 14 ? holding.coin : holding.coinName}
+        {/* Always show coinName truncated via CSS, never swap to ticker */}
+        <p className="text-sm font-semibold text-white leading-tight truncate max-w-[160px]">
+          {holding.coinName}
         </p>
         <p className="text-xs text-gray-500 leading-tight mt-0.5">{holding.coin}</p>
       </div>

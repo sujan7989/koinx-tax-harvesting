@@ -1,274 +1,74 @@
 import type { Holding, CapitalGainsResponse } from '../types';
 
-// ─── Holdings matching the demo video ────────────────────────────────────────
-// Demo shows: ETH 20,028 @ $3,367, SOL 20,277 @ $192, BNB 7,020 @ $708
-// Short-term gains are large negatives (losses in millions/hundreds of thousands)
-// Capital gains: Profits $4,049.48, Losses $32,127.03 (short-term)
+/**
+ * All gains are computed as: gain = (currentPrice - averageBuyPrice) × balance
+ * This ensures data integrity — every number is internally consistent.
+ *
+ * Capital Gains API data matches the assignment spec exactly:
+ *   stcg: { profits: 70200.88, losses: 1548.53 }
+ *   ltcg: { profits: 5020,     losses: 3050     }
+ *
+ * Holdings use the exact data from the assignment spec.
+ */
 
-export const HOLDINGS_DATA: Holding[] = [
-  {
-    coin: 'ETH',
-    coinName: 'Ethereum',
-    logo: 'https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628',
-    currentPrice: 2531.06,
-    totalHolding: 20028.05,
-    averageBuyPrice: 3367.78,
-    stcg: { balance: 20028.05, gain: -16757964.71 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'SOL',
-    coinName: 'Solana',
-    logo: 'https://coin-images.coingecko.com/coins/images/4128/large/solana.png?1696504756',
-    currentPrice: 174.37,
-    totalHolding: 20277.78,
-    averageBuyPrice: 192.15,
-    stcg: { balance: 20277.78, gain: -360410.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'BNB',
-    coinName: 'BNB',
-    logo: 'https://coin-images.coingecko.com/coins/images/825/large/bnb-icon2_2x.png?1696501970',
-    currentPrice: 665.55,
-    totalHolding: 7020.16,
-    averageBuyPrice: 708.72,
-    stcg: { balance: 7020.16, gain: -303050.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'WBTC',
-    coinName: 'Wrapped Bitcoin',
-    logo: 'https://coin-images.coingecko.com/coins/images/7598/large/wrapped_bitcoin_wbtc.png?1696507857',
-    currentPrice: 104390,
-    totalHolding: 2218.81,
-    averageBuyPrice: 92980.19,
-    stcg: { balance: 2218.81, gain: 25310000 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'BTC',
-    coinName: 'Bitcoin',
-    logo: 'https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400',
-    currentPrice: 104250,
-    totalHolding: 1184.12,
-    averageBuyPrice: 93072.64,
-    stcg: { balance: 1184.12, gain: 13240000 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'MATIC',
-    coinName: 'Polygon',
-    logo: 'https://coin-images.coingecko.com/coins/images/4713/large/polygon.png?1698233745',
-    currentPrice: 0.26,
-    totalHolding: 26038.45,
-    averageBuyPrice: 0.13,
-    stcg: { balance: 26038.45, gain: 3348.92 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'AVAX',
-    coinName: 'Avalanche',
-    logo: 'https://coin-images.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1696512369',
-    currentPrice: 28.14,
-    totalHolding: 8500.0,
-    averageBuyPrice: 35.60,
-    stcg: { balance: 8500.0, gain: -63410.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'LINK',
-    coinName: 'Chainlink',
-    logo: 'https://coin-images.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1696502009',
-    currentPrice: 14.22,
-    totalHolding: 12000.0,
-    averageBuyPrice: 18.50,
-    stcg: { balance: 12000.0, gain: -51360.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'DOT',
-    coinName: 'Polkadot',
-    logo: 'https://coin-images.coingecko.com/coins/images/12171/large/polkadot.png?1696512008',
-    currentPrice: 4.85,
-    totalHolding: 15000.0,
-    averageBuyPrice: 7.20,
-    stcg: { balance: 15000.0, gain: -35250.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'ADA',
-    coinName: 'Cardano',
-    logo: 'https://coin-images.coingecko.com/coins/images/975/large/cardano.png?1696502090',
-    currentPrice: 0.72,
-    totalHolding: 50000.0,
-    averageBuyPrice: 0.95,
-    stcg: { balance: 50000.0, gain: -11500.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'UNI',
-    coinName: 'Uniswap',
-    logo: 'https://coin-images.coingecko.com/coins/images/12504/large/uni.jpg?1696512319',
-    currentPrice: 8.45,
-    totalHolding: 3000.0,
-    averageBuyPrice: 12.30,
-    stcg: { balance: 3000.0, gain: -11550.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'ATOM',
-    coinName: 'Cosmos',
-    logo: 'https://coin-images.coingecko.com/coins/images/1481/large/cosmos_hub.png?1696502525',
-    currentPrice: 4.62,
-    totalHolding: 5000.0,
-    averageBuyPrice: 9.80,
-    stcg: { balance: 5000.0, gain: -25900.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'XRP',
-    coinName: 'XRP',
-    logo: 'https://coin-images.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png?1696501442',
-    currentPrice: 2.18,
-    totalHolding: 30000.0,
-    averageBuyPrice: 1.45,
-    stcg: { balance: 30000.0, gain: 21900.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'DOGE',
-    coinName: 'Dogecoin',
-    logo: 'https://coin-images.coingecko.com/coins/images/5/large/dogecoin.png?1696501409',
-    currentPrice: 0.185,
-    totalHolding: 100000.0,
-    averageBuyPrice: 0.24,
-    stcg: { balance: 100000.0, gain: -5500.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'LTC',
-    coinName: 'Litecoin',
-    logo: 'https://coin-images.coingecko.com/coins/images/2/large/litecoin.png?1696501400',
-    currentPrice: 92.40,
-    totalHolding: 800.0,
-    averageBuyPrice: 115.0,
-    stcg: { balance: 800.0, gain: -18080.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'NEAR',
-    coinName: 'NEAR Protocol',
-    logo: 'https://coin-images.coingecko.com/coins/images/10365/large/near.jpg?1696510367',
-    currentPrice: 2.85,
-    totalHolding: 10000.0,
-    averageBuyPrice: 5.40,
-    stcg: { balance: 10000.0, gain: -25500.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'FTM',
-    coinName: 'Fantom',
-    logo: 'https://coin-images.coingecko.com/coins/images/4001/large/Fantom_round.png?1696504642',
-    currentPrice: 0.72,
-    totalHolding: 20000.0,
-    averageBuyPrice: 1.85,
-    stcg: { balance: 20000.0, gain: -22600.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'SAND',
-    coinName: 'The Sandbox',
-    logo: 'https://coin-images.coingecko.com/coins/images/12129/large/sandbox_logo.jpg?1696511971',
-    currentPrice: 0.32,
-    totalHolding: 15000.0,
-    averageBuyPrice: 0.85,
-    stcg: { balance: 15000.0, gain: -7950.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'MANA',
-    coinName: 'Decentraland',
-    logo: 'https://coin-images.coingecko.com/coins/images/878/large/decentraland-mana.png?1696502010',
-    currentPrice: 0.28,
-    totalHolding: 20000.0,
-    averageBuyPrice: 0.72,
-    stcg: { balance: 20000.0, gain: -8800.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'CRV',
-    coinName: 'Curve DAO Token',
-    logo: 'https://coin-images.coingecko.com/coins/images/12124/large/Curve.png?1696511967',
-    currentPrice: 0.48,
-    totalHolding: 8000.0,
-    averageBuyPrice: 1.20,
-    stcg: { balance: 8000.0, gain: -5760.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'AAVE',
-    coinName: 'Aave',
-    logo: 'https://coin-images.coingecko.com/coins/images/12645/large/AAVE.png?1696512452',
-    currentPrice: 185.40,
-    totalHolding: 200.0,
-    averageBuyPrice: 245.0,
-    stcg: { balance: 200.0, gain: -11920.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'MKR',
-    coinName: 'Maker',
-    logo: 'https://coin-images.coingecko.com/coins/images/1364/large/Mark_Maker.png?1696502423',
-    currentPrice: 1420.0,
-    totalHolding: 50.0,
-    averageBuyPrice: 2100.0,
-    stcg: { balance: 50.0, gain: -34000.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'SNX',
-    coinName: 'Synthetix',
-    logo: 'https://coin-images.coingecko.com/coins/images/3406/large/SNX.png?1696504103',
-    currentPrice: 1.42,
-    totalHolding: 5000.0,
-    averageBuyPrice: 3.80,
-    stcg: { balance: 5000.0, gain: -11900.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'COMP',
-    coinName: 'Compound',
-    logo: 'https://coin-images.coingecko.com/coins/images/10775/large/COMP.png?1696510737',
-    currentPrice: 48.20,
-    totalHolding: 300.0,
-    averageBuyPrice: 95.0,
-    stcg: { balance: 300.0, gain: -14040.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
-  {
-    coin: 'SUSHI',
-    coinName: 'SushiSwap',
-    logo: 'https://coin-images.coingecko.com/coins/images/12271/large/512x512_Logo_no_chop.png?1696512101',
-    currentPrice: 0.92,
-    totalHolding: 10000.0,
-    averageBuyPrice: 2.40,
-    stcg: { balance: 10000.0, gain: -14800.0 },
-    ltcg: { balance: 0, gain: 0 },
-  },
+function computeGain(currentPrice: number, avgBuyPrice: number, balance: number): number {
+  return parseFloat(((currentPrice - avgBuyPrice) * balance).toFixed(2));
+}
+
+const raw = [
+  // From assignment spec — exact values
+  { coin: 'USDC',   coinName: 'USDC',                                    logo: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',          currentPrice: 85.41,      totalHolding: 0.001534,    avgBuyPrice: 1.5863,   stcgBal: 0.001534,    ltcgBal: 0 },
+  { coin: 'WETH',   coinName: 'Polygon PoS Bridged WETH',                logo: 'https://coin-images.coingecko.com/coins/images/2518/large/weth.png?1696503332',          currentPrice: 211756,     totalHolding: 0.00024,     avgBuyPrice: 3599.86,  stcgBal: 0.00024,     ltcgBal: 0 },
+  { coin: 'SOL',    coinName: 'SOL (Wormhole)',                           logo: 'https://coin-images.coingecko.com/coins/images/22876/large/SOL_wh_small.png?1696522175', currentPrice: 14758.01,   totalHolding: 0.00000000000000003469, avgBuyPrice: 221.43, stcgBal: 0.00000000000000003469, ltcgBal: 0 },
+  { coin: 'WPOL',   coinName: 'Wrapped POL',                             logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 22.08,      totalHolding: 2.3173,      avgBuyPrice: 0.5227,   stcgBal: 1.3173,      ltcgBal: 1 },
+  { coin: 'MATIC',  coinName: 'Polygon',                                 logo: 'https://coin-images.coingecko.com/coins/images/4713/large/polygon.png?1698233745',       currentPrice: 22.22,      totalHolding: 2.7515,      avgBuyPrice: 0.6880,   stcgBal: 2.7515,      ltcgBal: 0 },
+  { coin: 'GONE',   coinName: 'Gone',                                    logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 0.0001462,  totalHolding: 696324.31,   avgBuyPrice: 0.0000164, stcgBal: 696324.31,  ltcgBal: 0 },
+  { coin: 'USDT',   coinName: 'Arbitrum Bridged USDT',                   logo: 'https://coin-images.coingecko.com/coins/images/325/large/Tether.png?1696501661',        currentPrice: 85.42,      totalHolding: 0.000158,    avgBuyPrice: 1.4988,   stcgBal: 0.000158,    ltcgBal: 0 },
+  { coin: 'USDC',   coinName: 'Bridged USDC (Polygon PoS Bridge)',       logo: 'https://coin-images.coingecko.com/coins/images/33000/large/usdc.png?1700119918',        currentPrice: 85.41,      totalHolding: 0.005807,    avgBuyPrice: 1.5405,   stcgBal: 0.005807,    ltcgBal: 0 },
+  { coin: 'SLN',    coinName: 'Smart Layer Network',                     logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 6.66,       totalHolding: 0.01,        avgBuyPrice: 4.9992,   stcgBal: 0.01,        ltcgBal: 0 },
+  { coin: 'OX',     coinName: 'OX Coin',                                 logo: 'https://coin-images.coingecko.com/coins/images/35365/large/logo.png?1708395976',        currentPrice: 0.13319,    totalHolding: 5,           avgBuyPrice: 0.01841,  stcgBal: 5,           ltcgBal: 0 },
+  { coin: 'FLAME',  coinName: 'FireStarter',                             logo: 'https://coin-images.coingecko.com/coins/images/17359/large/WhiteOnBlack_Primary_Logo.png?1696516910', currentPrice: 0.355985, totalHolding: 0.0000000000000142, avgBuyPrice: 0.07889, stcgBal: 0.0000000000000142, ltcgBal: 0 },
+  { coin: 'PIG',    coinName: 'Pigcoin',                                 logo: 'https://coin-images.coingecko.com/coins/images/35425/large/pigcoin_200.png?1708544734', currentPrice: 0.00008706, totalHolding: 1.79,        avgBuyPrice: 0,        stcgBal: 1.79,        ltcgBal: 0 },
+  { coin: '$CULO',  coinName: 'CULO',                                    logo: 'https://coin-images.coingecko.com/coins/images/34662/large/CULO-logo-inverted_200.png?1705641744', currentPrice: 0.00001623, totalHolding: 150000, avgBuyPrice: 0, stcgBal: 150000, ltcgBal: 0 },
+  { coin: 'ETH',    coinName: 'Ethereum',                                logo: 'https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628',       currentPrice: 216182,     totalHolding: 0.000421,    avgBuyPrice: 3909.79,  stcgBal: 0.000421,    ltcgBal: 0 },
+  { coin: 'QUICK',  coinName: 'Quickswap [OLD]',                         logo: 'https://coin-images.coingecko.com/coins/images/13970/large/quick.png?1696513704',       currentPrice: 2319.83,    totalHolding: 0.0000000000596, avgBuyPrice: 65.87, stcgBal: 0.0000000000596, ltcgBal: 0 },
+  { coin: 'DFYN',   coinName: 'Dfyn Network',                            logo: 'https://coin-images.coingecko.com/coins/images/15368/large/SgqhfWz4_400x400_%281%29.jpg?1696515016', currentPrice: 0.300613, totalHolding: 0.0000000000312, avgBuyPrice: 0.03486, stcgBal: 0.0000000000312, ltcgBal: 0 },
+  { coin: 'LINK',   coinName: 'Chainlink',                               logo: 'https://coin-images.coingecko.com/coins/images/877/large/chainlink-new-logo.png?1696502009', currentPrice: 1450.14, totalHolding: 0.0000472, avgBuyPrice: 9.173, stcgBal: 0.0000472, ltcgBal: 0 },
+  { coin: 'BLOK',   coinName: 'Bloktopia',                               logo: 'https://coin-images.coingecko.com/coins/images/18819/large/logo-bholdus-6.png?1696518281', currentPrice: 0.02974533, totalHolding: 0.0000000000982, avgBuyPrice: 0.005182, stcgBal: 0.0000000000982, ltcgBal: 0 },
+  { coin: 'SPHERE', coinName: 'Sphere Finance',                          logo: 'https://coin-images.coingecko.com/coins/images/24424/large/2iR2JsL.png?1696523606',     currentPrice: 0.00729945, totalHolding: 0.000000000000000227, avgBuyPrice: 0.011066, stcgBal: 0.000000000000000227, ltcgBal: 0 },
+  { coin: 'TRADE',  coinName: 'Polytrade',                               logo: 'https://coin-images.coingecko.com/coins/images/16416/large/Logo_colored_200.png?1696516012', currentPrice: 17.51, totalHolding: 0.0000000000333, avgBuyPrice: 0.2596, stcgBal: 0.0000000000333, ltcgBal: 0 },
+  { coin: 'WELT',   coinName: 'Fabwelt',                                 logo: 'https://coin-images.coingecko.com/coins/images/20505/large/welt.PNG?1696519911',         currentPrice: 0.060863,   totalHolding: 1.063543,    avgBuyPrice: 0.015205, stcgBal: 1.063543,    ltcgBal: 0 },
+  { coin: 'FTM',    coinName: 'Fantom',                                  logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 52.99,      totalHolding: 0.042658,    avgBuyPrice: 1.7040,   stcgBal: 0.042658,    ltcgBal: 0 },
+  { coin: 'EZ',     coinName: 'EasyFi V2',                               logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 0.885074,   totalHolding: 0.000542,    avgBuyPrice: 6.5394,   stcgBal: 0.000542,    ltcgBal: 0 },
+  { coin: 'FRM',    coinName: 'Ferrum Network',                          logo: 'https://coin-images.coingecko.com/coins/images/8251/large/FRM.png?1696508455',          currentPrice: 0.093794,   totalHolding: 0.000000644, avgBuyPrice: 0.453965, stcgBal: 0.000000644, ltcgBal: 0 },
+  { coin: 'TITAN',  coinName: 'IRON Titanium',                           logo: 'https://koinx-statics.s3.ap-south-1.amazonaws.com/currencies/DefaultCoin.svg',          currentPrice: 0.000000865643, totalHolding: 8.861, avgBuyPrice: 0.000000853180, stcgBal: 8.861, ltcgBal: 0 },
 ];
 
-// ─── Capital Gains matching the demo video ────────────────────────────────────
-// Demo shows: Short-term Profits $4,049.48, Losses $32,127.03
+export const HOLDINGS_DATA: Holding[] = raw.map(h => {
+  const stcgGain = computeGain(h.currentPrice, h.avgBuyPrice, h.stcgBal);
+  const ltcgGain = h.ltcgBal > 0 ? computeGain(h.currentPrice, h.avgBuyPrice, h.ltcgBal) : 0;
+  return {
+    coin: h.coin,
+    coinName: h.coinName,
+    logo: h.logo,
+    currentPrice: h.currentPrice,
+    totalHolding: h.totalHolding,
+    averageBuyPrice: h.avgBuyPrice,
+    stcg: { balance: h.stcgBal, gain: stcgGain },
+    ltcg: { balance: h.ltcgBal, gain: ltcgGain },
+  };
+});
+
+// Capital Gains from the assignment spec — exact values
 export const CAPITAL_GAINS_DATA: CapitalGainsResponse = {
   capitalGains: {
     stcg: {
-      profits: 4049.48,
-      losses: 32127.03,
+      profits: 70200.88,
+      losses: 1548.53,
     },
     ltcg: {
-      profits: 0,
-      losses: 0,
+      profits: 5020,
+      losses: 3050,
     },
   },
 };
