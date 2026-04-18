@@ -2,7 +2,9 @@
 
 A responsive, dark-themed React + TypeScript application that helps users visualise and optimise their crypto tax liability through tax-loss harvesting.
 
-**Live Demo:** [Deployed on Vercel](#) *(link added after deployment)*
+**Live Demo:** https://koinx-tax-harvesting-eta.vercel.app
+
+**GitHub:** https://github.com/sujan7989/koinx-tax-harvesting
 
 ---
 
