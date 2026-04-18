@@ -72,7 +72,7 @@ function TaxHarvestingPage() {
               title="After Harvesting"
               gains={afterHarvestingGains}
               isBlue={true}
-              savingsAmount={savings > 0 ? savings : undefined}
+              savingsAmount={savings > 0.01 ? savings : undefined}
             />
           </div>
         ) : null}

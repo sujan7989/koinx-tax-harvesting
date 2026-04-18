@@ -63,9 +63,9 @@ export function TaxHarvestingProvider({ children }: { children: React.ReactNode 
   const toggleAll = useCallback(() => {
     setSelectedIds((prev) => {
       if (prev.size === holdings.length) {
-        return new Set();
+        return new Set<number>();
       }
-      return new Set(holdings.map((_, i) => i));
+      return new Set<number>(holdings.map((_, i) => i));
     });
   }, [holdings]);
 
@@ -77,18 +77,19 @@ export function TaxHarvestingProvider({ children }: { children: React.ReactNode 
     let ltcgProfits = capitalGains.ltcg.profits;
     let ltcgLosses = capitalGains.ltcg.losses;
 
-    selectedIds.forEach((idx) => {
+    // Convert Set to Array to iterate — ensures useMemo sees the values
+    Array.from(selectedIds).forEach((idx) => {
       const holding = holdings[idx];
       if (!holding) return;
 
-      // STCG
+      // STCG: positive gain → add to profits, negative gain → add to losses
       if (holding.stcg.gain > 0) {
         stcgProfits += holding.stcg.gain;
       } else if (holding.stcg.gain < 0) {
         stcgLosses += Math.abs(holding.stcg.gain);
       }
 
-      // LTCG
+      // LTCG: positive gain → add to profits, negative gain → add to losses
       if (holding.ltcg.gain > 0) {
         ltcgProfits += holding.ltcg.gain;
       } else if (holding.ltcg.gain < 0) {
@@ -100,6 +101,7 @@ export function TaxHarvestingProvider({ children }: { children: React.ReactNode 
       stcg: { profits: stcgProfits, losses: stcgLosses },
       ltcg: { profits: ltcgProfits, losses: ltcgLosses },
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capitalGains, selectedIds, holdings]);
 
   const savings = useMemo(() => {
